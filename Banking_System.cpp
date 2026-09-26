@@ -6,6 +6,7 @@
  using namespace std;
  #define MIN_BALANCE 500
  class InsufficientFunds{};
+ class AccountNotFound{};
  class Account
  {
  private:
@@ -84,9 +85,14 @@
             case 2:
                 cout<<"Enter Account Number:";
                 cin>>accountNumber;
-                acc=b.BalanceEnquiry(accountNumber);
-                cout<<endl<<"Your Account Details"<<endl;
-                cout<<acc;
+                try{
+                  acc=b.BalanceEnquiry(accountNumber);
+                  cout<<endl<<"Your Account Details"<<endl;
+                  cout<<acc;
+                }
+                catch(AccountNotFound){
+                  cout<<"Account does not exist."<<endl;
+                }
                 break;
             case 3:
                 cout<<"Enter Account Number:";
@@ -216,6 +222,8 @@
  Account Bank::BalanceEnquiry(long accountNumber)
  {
     map<long,Account>::iterator itr=accounts.find(accountNumber);
+    if(itr==accounts.end())
+      throw AccountNotFound();
     return itr->second;
  }
  Account Bank::Deposit(long accountNumber,float amount)
