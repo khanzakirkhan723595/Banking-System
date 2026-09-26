@@ -204,26 +204,24 @@
     os<<"Balance:"<<acc.getBalance()<<endl;
     return os;
  }
- Bank::Bank()
- {
-    
+ Bank::Bank() {
     Account account;
     ifstream infile;
+
     infile.open("Bank.data");
+
     if(!infile)
-    {
-        //cout<<"Error in Opening! File Not Found!!"<<endl;
         return;
+
+    while(infile >> account) {
+        accounts.insert(pair<long,Account>(account.getAccNo(), account));
     }
-    while(!infile.eof())
-    {
-        infile>>account;
-        accounts.insert(pair<long,Account>(account.getAccNo(),account));
+
+    if(!accounts.empty()) {
+        Account::setLastAccountNumber(accounts.rbegin()->first); //gives the largest account number.
     }
-    Account::setLastAccountNumber(account.getAccNo());
-    
+
     infile.close();
-    
 }
  Account Bank::OpenAccount(string fname,string lname,float balance)
  {
