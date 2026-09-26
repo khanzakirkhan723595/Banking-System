@@ -132,9 +132,15 @@
             case 5:
                 cout<<"Enter Account Number:";
                 cin>>accountNumber;
-                b.CloseAccount(accountNumber);
-                cout<<endl<<"Account is Closed"<<endl;
-                cout<<acc;
+               try {
+                  b.CloseAccount(accountNumber);
+                  cout << "Account is Closed" << endl;
+               }
+               catch(AccountNotFound) {
+                  cout << "Account does not exist." << endl;
+               }
+
+               break;
             case 6:
                 b.ShowAllAccounts();
                 break;
@@ -262,8 +268,12 @@
  void Bank::CloseAccount(long accountNumber)
  {
     map<long,Account>::iterator itr=accounts.find(accountNumber);
-    cout<<"Account Deleted"<<itr->second;
-    accounts.erase(accountNumber);
+    if (itr == accounts.end()) {
+        throw AccountNotFound();
+    }
+    cout << "Account Deleted" << endl;
+    cout << itr->second;
+    accounts.erase(accountNumber); //we can also use itr here to erase the account
  }
  void Bank::ShowAllAccounts()
  {
