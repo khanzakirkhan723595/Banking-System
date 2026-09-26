@@ -99,9 +99,15 @@
                 cin>>accountNumber;
                 cout<<"Enter Balance:";
                 cin>>amount;
-                acc=b.Deposit(accountNumber, amount);
-                cout<<endl<<"Amount is Deposited"<<endl;
-                cout<<acc;
+                try {
+                     acc = b.Deposit(accountNumber, amount);
+
+                     cout<<endl<<"Amount is Deposited"<<endl;
+                     cout<<acc;
+                  }
+                  catch(AccountNotFound) {
+                     cout<<"Account does not exist."<<endl;
+                  }
                 
                 break;
             case 4:
@@ -109,9 +115,19 @@
                 cin>>accountNumber;
                 cout<<"Enter Balance:";
                 cin>>amount;
-                acc=b.Withdraw(accountNumber, amount);
-                cout<<endl<<"Amount Withdrawn"<<endl;
-                cout<<acc;
+                try {
+                     acc = b.Withdraw(accountNumber, amount);
+
+                     cout<<endl<<"Amount Withdrawn"<<endl;
+                     cout<<acc;
+                  }
+                  catch(AccountNotFound) {
+                     cout<<"Account does not exist."<<endl;
+                  }
+                  catch(InsufficientFunds) {
+                     cout<<"Insufficient funds."<<endl;
+                  }
+
                 break;
             case 5:
                 cout<<"Enter Account Number:";
@@ -229,12 +245,17 @@
  Account Bank::Deposit(long accountNumber,float amount)
  {
     map<long,Account>::iterator itr=accounts.find(accountNumber);
+    if (itr == accounts.end()) {
+        throw AccountNotFound();
+    }
     itr->second.Deposit(amount);
     return itr->second;
  }
  Account Bank::Withdraw(long accountNumber,float amount)
  {
     map<long,Account>::iterator itr=accounts.find(accountNumber);
+    if(itr==accounts.end())
+      throw AccountNotFound();
     itr->second.Withdraw(amount);
     return itr->second;
  }
