@@ -7,6 +7,8 @@
  #define MIN_BALANCE 500
  class InsufficientFunds{};
  class AccountNotFound{};
+ class InvalidInitialBalance {};
+ class InvalidAmount {};
  class Account
  {
  private:
@@ -78,9 +80,16 @@
                 cin>>lname;
                 cout<<"Enter initil Balance: ";
                 cin>>balance;
-                acc=b.OpenAccount(fname,lname,balance);
-                cout<<endl<<"Congradulation Account is Created"<<endl;
-                cout<<acc;
+                try {
+                     acc=b.OpenAccount(fname,lname,balance);
+
+                     cout<<endl<<"Congradulation Account is Created"<<endl;
+                     cout<<acc;
+                  }
+                  catch(InvalidInitialBalance) {
+                     cout<<"Initial balance must be at least "
+                           <<MIN_BALANCE <<endl;
+                  }
                 break;
             case 2:
                 cout<<"Enter Account Number:";
@@ -108,6 +117,9 @@
                   catch(AccountNotFound) {
                      cout<<"Account does not exist."<<endl;
                   }
+                  catch(InvalidAmount) {
+                     cout<<"Amount must be greater than zero."<<endl;
+                  }
                 
                 break;
             case 4:
@@ -126,6 +138,9 @@
                   }
                   catch(InsufficientFunds) {
                      cout<<"Insufficient funds."<<endl;
+                  }
+                  catch(InvalidAmount) {
+                     cout<<"Amount must be greater than zero."<<endl;
                   }
 
                 break;
@@ -155,6 +170,8 @@
  }
  Account::Account(string fname,string lname,float balance)
  {
+   if(balance<MIN_BALANCE)
+      throw InvalidInitialBalance();
     NextAccountNumber++;
     accountNumber=NextAccountNumber;
     firstName=fname;
@@ -163,10 +180,17 @@
  }
  void Account::Deposit(float amount)
  {
+   if(amount <= 0) {
+        throw InvalidAmount();
+    }
     balance+=amount;
  }
  void Account::Withdraw(float amount)
  {
+   if(amount <= 0) {
+        throw InvalidAmount();
+    }
+
     if(balance-amount<MIN_BALANCE)
         throw InsufficientFunds();
     balance-=amount;
